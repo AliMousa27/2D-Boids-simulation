@@ -37,6 +37,7 @@ def update_boids(boids: List[Boid]):
     boid.x += boid.vx
     boid.y +=boid.vy
 
+#limit
 def limit_velocity(boid:Boid,max_speed = 1, min_speed=0.4):
   speed = math.sqrt(boid.vx**2 + boid.vy **2)
   if speed > max_speed:
