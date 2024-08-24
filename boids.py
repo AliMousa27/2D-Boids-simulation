@@ -13,6 +13,14 @@ class Boid():
 
 DIM = (640 , 480)
 
+def angle_between_vectors(old_vx:float ,old_vy:float ,new_vx:float ,new_vy:float ) -> float:
+  dot_product = (old_vx*new_vx) + (old_vy*new_vy) 
+  old_magnitude = math.sqrt(old_vx**2+old_vy**2)
+  new_magnitude = math.sqrt(new_vx**2+new_vy**2)
+  angle_in_radians = math.acos(dot_product/(old_magnitude*new_magnitude))
+  return angle_in_radians * (180/math.pi)
+  
+  
 
 def add_boids(boids: List[Boid]):
   width = DIM[0]
@@ -122,7 +130,6 @@ def main():
 
   while running:
       # poll for events
-      # pygame.QUIT event means the user clicked X to close your window
       for event in pygame.event.get():
           if event.type == pygame.QUIT:
               running = False
@@ -131,9 +138,12 @@ def main():
       screen.fill("white")
 
       for boid in boids:
+        #save old velocity vectors
+        old_vx = boid.vx
+        old_vy = boid.vy
+        #after update, we have a new velocity vector
         update_boids(boids,boid)
         render_boids(pygame,screen,boid)
-      # flip() the display to put your work on screen
       pygame.display.flip()
 
       clock.tick(60) 
