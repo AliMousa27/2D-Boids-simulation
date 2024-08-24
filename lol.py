@@ -47,6 +47,7 @@ def limit_velocity(boid:Boid,max_speed = 1, min_speed=0.4):
     boid.vy = (boid.vy/speed)* min_speed
     
 def turn_from_screen(boid:Boid,turn_factor = 1):
+  #constants
   max_x = DIM[0]
   max_y = DIM[1]
   min_x=0
