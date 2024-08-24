@@ -3,11 +3,12 @@ from boids_manager import BoidsManager
 from graphics import render_boids
 WIDTH = 640
 HEIGHT = 480
+NUM_OF_BOIDS = 100
 
 def main():
     # setup
     pygame.init()
-    boids_manager = BoidsManager(WIDTH,HEIGHT)
+    boids_manager = BoidsManager(WIDTH,HEIGHT,NUM_OF_BOIDS)
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
     clock = pygame.time.Clock()
     running = True
