@@ -3,11 +3,19 @@ import math
 import random
 from utils import distance
 class BoidsManager():
-  def __init__(self,width:int,height:int,num_of_boids:int) -> None:
-      self.boids = []
-      self.width = width
-      self.height = height
-      self.add_boids(num_of_boids)
+  def __init__(self,width:int,height:int,num_of_boids:int,
+               align_factor:float=0.1,cohesion_factor:float=0.01,seperation_factor=0.05,
+               max_speed:float=1.5, min_speed:float=0.4,turn_factor:float=1.0) -> None:
+    self.boids = []
+    self.width = width
+    self.height = height
+    self.align_factor = align_factor
+    self.cohesion_factor = cohesion_factor
+    self.seperation_factor = seperation_factor
+    self.max_speed = max_speed
+    self.min_speed = min_speed
+    self.turn_factor = turn_factor
+    self.add_boids(num_of_boids)
 
   def add_boids(self,num_of_boids) -> None:
       """
@@ -52,7 +60,7 @@ class BoidsManager():
       boid.target_angle = math.atan2(boid.vy, boid.vx)
       boid.update_angle()
 
-  def limit_velocity(self,boid: Boid, max_speed:float=1.5, min_speed:float=0.4) ->None:
+  def limit_velocity(self,boid: Boid) ->None:
       """
         Limits the velocity of a boid to a specified range.
 
@@ -70,16 +78,16 @@ class BoidsManager():
         """
       #magnitude of the velocity vector is the speed
       speed = math.sqrt(boid.vx ** 2 + boid.vy ** 2)
-      if speed > max_speed:
+      if speed > self.max_speed:
           #normalize the vector and multiply by max speed
-          boid.vx = (boid.vx / speed) * max_speed
-          boid.vy = (boid.vy / speed) * max_speed
-      elif speed < min_speed:
+          boid.vx = (boid.vx / speed) * self.max_speed
+          boid.vy = (boid.vy / speed) * self.max_speed
+      elif speed < self.min_speed:
           #same here for min speed
-          boid.vx = (boid.vx / speed) * min_speed
-          boid.vy = (boid.vy / speed) * min_speed
+          boid.vx = (boid.vx / speed) * self.min_speed
+          boid.vy = (boid.vy / speed) * self.min_speed
 
-  def turn_from_screen(self,boid: Boid, turn_factor:float=1.0) -> None:
+  def turn_from_screen(self,boid: Boid) -> None:
       """
         Adjusts the velocity of the given boid based on its position relative to the screen boundaries.
 
@@ -94,16 +102,16 @@ class BoidsManager():
       #self explanatory. if the boid is too close to the edge, turn it around by moving the velocity vector
       #in the opposite direction
       if (boid.x > max_x):
-          boid.vx -= turn_factor
+          boid.vx -= self.turn_factor
       if (boid.x < min_x):
-          boid.vx += turn_factor
+          boid.vx += self.turn_factor
       if (boid.y < min_y):
-          boid.vy += turn_factor
+          boid.vy += self.turn_factor
       if (boid.y > max_y):
-          boid.vy -= turn_factor
+          boid.vy -= self.turn_factor
 
         
-  def align(self, boid: Boid, neighbor_dist:float=50.0, align_factor:float=0.1)->None:
+  def align(self, boid: Boid, neighbor_dist:float=50.0)->None:
       """
         Adjusts the velocity of the given boid to align it with the average velocity of neighboring boids.
         Parameters:
@@ -128,10 +136,10 @@ class BoidsManager():
       if total > 0:
           vx_average = vx_average / total
           vy_average = vy_average / total
-          boid.vx += (vx_average - boid.vx) * align_factor
-          boid.vy += (vy_average - boid.vy) * align_factor
+          boid.vx += (vx_average - boid.vx) * self.align_factor
+          boid.vy += (vy_average - boid.vy) * self.align_factor
 
-  def cohesion(self, boid: Boid, neighbor_dist:float=50.0, cohesion_factor:float=0.01) -> None:
+  def cohesion(self, boid: Boid, neighbor_dist:float=50.0) -> None:
       """
     Calculates the cohesion behavior for a given boid.
     Args:
@@ -153,10 +161,10 @@ class BoidsManager():
       if total > 0:
           x_average = x_average / total
           y_average = y_average / total
-          boid.x += (x_average - boid.x) * cohesion_factor
-          boid.y += (y_average - boid.y) * cohesion_factor
+          boid.x += (x_average - boid.x) * self.cohesion_factor
+          boid.y += (y_average - boid.y) * self.cohesion_factor
 
-  def seperate(self, boid: Boid, neighbor_dist=20, seperation_factor=0.05):
+  def seperate(self, boid: Boid, neighbor_dist=20):
       """
     Applies separation behavior to the given boid.
     Args:
@@ -171,5 +179,5 @@ class BoidsManager():
               #subtract positons to move away from that specific boid
               close_x += boid.x - other_boid.x
               close_y += boid.y - other_boid.y
-      boid.vx += close_x * seperation_factor
-      boid.vy += close_y * seperation_factor
+      boid.vx += close_x * self.seperation_factor
+      boid.vy += close_y * self.seperation_factor
