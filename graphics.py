@@ -1,28 +1,25 @@
-import math
-
-def render_boids(pygame, screen, boid):
-    #https://stackoverflow.com/questions/34372480/rotate-point-about-another-point-in-degrees-python
-    #its matrix math but i couldnt be bothered so i copied lol
-    def rotate(origin, point, angle):
-        """
-        Rotate a point counterclockwise by a given angle around a given origin.
-        The angle should be given in radians.
-        """
-        ox, oy = origin
-        px, py = point
-
-        qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
-        qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
-        return qx, qy
-
-    angle = boid.angle
-
+import pygame
+from utils import rotate
+from boid import Boid
+from pygame.surface import Surface
+def render_boids(pygame:pygame, screen:Surface, boid:Boid)->None:
+    """
+    Renders a boid on the screen.
+    Args:
+        pygame (module): The pygame module.
+        screen (Surface): The surface to render the boid on.
+        boid (Boid): The boid object to render.
+    Returns:
+        None
+    """
+    #3 points for the triangle. the vertices were kind of arbiterary i just liked the size
+    #they are made based on the origin point that is the center of the boid
     tip = [boid.x + 10, boid.y]
     base_1 = [boid.x - 10, boid.y - 5]
     base_2 = [boid.x - 10, boid.y + 5]
-
-    rotated_tip = rotate((boid.x, boid.y), tip, angle)
-    rotated_base_1 = rotate((boid.x, boid.y), base_1, angle)
-    rotated_base_2 = rotate((boid.x, boid.y), base_2, angle)
-
+    #rotate them
+    rotated_tip = rotate((boid.x, boid.y), tip, boid.angle)
+    rotated_base_1 = rotate((boid.x, boid.y), base_1, boid.angle)
+    rotated_base_2 = rotate((boid.x, boid.y), base_2, boid.angle)
+    #draw rotated points
     pygame.draw.polygon(screen, "black", [rotated_tip, rotated_base_1, rotated_base_2], 1)

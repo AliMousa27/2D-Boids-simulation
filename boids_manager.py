@@ -1,5 +1,4 @@
 from boid import Boid
-from typing import List
 import math
 import random
 from utils import distance
