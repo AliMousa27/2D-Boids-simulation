@@ -27,8 +27,8 @@ def add_boids(boids: List[Boid]):
 def distance(boid1:Boid,boid2:Boid):
   return math.sqrt(((boid2.x-boid1.x)**2) + ((boid2.y-boid1.y)**2))
     
-def update_boids(boids: List[Boid]):
-  for boid in boids:
+def update_boids(boids: List[Boid],boid):
+
     align(boids,boid)
     cohesion(boids,boid)
     seperate(boids,boid)
@@ -108,9 +108,8 @@ def seperate(boids:List[Boid], boid:Boid,neighbor_dist = 20, seperation_factor =
   boid.vx += close_x*seperation_factor
   boid.vy += close_y*seperation_factor
       
-def render_boids(pygame,screen,boids:List[Boid]):
-  for boid in boids:
-    pygame.draw.circle(screen, "black", (boid.x,boid.y), 5)
+def render_boids(pygame,screen,boid):
+    pygame.draw.polygon(screen, "black", [[boid.x,boid.y],[boid.x+10,boid.y],[boid.x+5,boid.y+15]],1)
 
 def main():
   # pygame setup
@@ -131,13 +130,13 @@ def main():
       # fill the screen with a color to wipe away anything from last frame
       screen.fill("white")
 
-      # RENDER YOUR GAME HERE
-      update_boids(boids)
-      render_boids(pygame,screen,boids)
+      for boid in boids:
+        update_boids(boids,boid)
+        render_boids(pygame,screen,boid)
       # flip() the display to put your work on screen
       pygame.display.flip()
 
-      clock.tick(60)  # limits FPS to 60
+      clock.tick(60) 
 
   pygame.quit()
   
